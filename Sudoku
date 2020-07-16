@@ -1,0 +1,125 @@
+# this is printing the empty board
+
+board = [
+    [7, 8, 0, 4, 0, 0, 1, 2, 0],
+    [6, 0, 0, 0, 7, 5, 0, 0, 9],
+    [0, 0, 0, 6, 0, 1, 0, 7, 8],
+    [0, 0, 7, 0, 4, 0, 2, 6, 0],
+    [0, 0, 1, 0, 5, 0, 9, 3, 0],
+    [9, 0, 4, 0, 6, 0, 0, 0, 5],
+    [0, 7, 0, 3, 0, 0, 0, 1, 2],
+    [1, 2, 0, 0, 0, 7, 4, 0, 0],
+    [0, 4, 9, 2, 0, 6, 0, 0, 7]
+]
+
+def print_board(bo):
+
+    for i in range(len(bo)):
+        if i % 3 == 0 and i != 0:        #saying if 'i' so is divisable by 3, print a ------ to seperate the board
+            print("- - - - - - - - - - - - - ")
+
+        for j in range(len(bo[0])):
+            if j % 3 == 0 and j != 0:    #need this extra code so it doesn't print an extra line on the very left side at the beginning
+                print(" | ", end="")     #doesn't go to the next line, it just stops
+
+            if j == 8:
+                print(bo[i][j])
+            else:
+                print(str(bo[i][j]) + " ", end="")
+
+
+def find_empty(bo):              # looking through the board to find an empty place or like a 'place filled with 0'
+    for i in range(len(bo)):
+        for j in range(len(bo[0])):     #(bo[0]) means searching through the row
+            if bo[i][j] == 0:
+                return (i, j)  # row, col
+
+    return None  # if there is no blank squares, then it means it's done
+
+board = [
+
+    [7, 8, 0, 4, 0, 0, 1, 2, 0],
+    [6, 0, 0, 0, 7, 5, 0, 0, 9],
+    [0, 0, 0, 6, 0, 1, 0, 7, 8],
+    [0, 0, 7, 0, 4, 0, 2, 6, 0],
+    [0, 0, 1, 0, 5, 0, 9, 3, 0],
+    [9, 0, 4, 0, 6, 0, 0, 0, 5],
+    [0, 7, 0, 3, 0, 0, 0, 1, 2],
+    [1, 2, 0, 0, 0, 7, 4, 0, 0],
+    [0, 4, 9, 2, 0, 6, 0, 0, 7]
+]
+
+
+def solve(bo):
+    find = find_empty(bo)
+    if not find:        # indicates that you have found the solution or the right number
+        return True
+    else:                  # looping it through again until it returns true
+        row, col = find      # this is the position we've found that was empty
+
+    for i in range(1,10):  # checking through all of the values
+        if valid(bo, i, (row, col)):    # checking if adding in 1-9 would make it valid (from def valid below)
+            bo[row][col] = i            # if it is valid then I will plug it back into my board
+
+            if solve(bo):               # when you plug in, run def solve again until it returns true
+                return True
+
+            bo[row][col] = 0            # ohhh, when it is false, it resets the position and it picks a new number
+
+    return False
+
+
+def valid(bo, num, pos):
+
+# this next section is checking for the numbers in the grid
+
+    # Check row
+    for i in range(len(bo[0])):
+        if bo[pos[0]][i] == num and pos[1] != i: #check through each element in the row and see if it's = to the # just added
+            return False
+
+    # Check column
+    for i in range(len(bo)):
+        if bo[i][pos[1]] == num and pos[0] != i: # does the same thing and the second part makes sure it doesn't check the exact postion where we inserted the number
+            return False
+
+    # Check box to see if it repreats
+    box_x = pos[1] // 3      # checking what box (out of nine) that we are in
+    box_y = pos[0] // 3
+
+    for i in range(box_y*3, box_y*3 + 3):               # u multiply by 3 to get to the other box cause theyre spaced out by 3
+        for j in range(box_x * 3, box_x*3 + 3):         # and u add 3 do loop through each row
+            if bo[i][j] == num and (i,j) != pos:        # checking if it is the same number as the number we just added
+                return False
+
+    return True  # for everything else, we print true
+
+
+def print_board(bo):         # defines
+    for i in range(len(bo)):
+        if i % 3 == 0 and i != 0:
+            print("- - - - - - - - - - - - - ")
+
+        for j in range(len(bo[0])):
+            if j % 3 == 0 and j != 0:
+                print(" | ", end="")
+
+            if j == 8:
+                print(bo[i][j])
+            else:
+                print(str(bo[i][j]) + " ", end="")
+
+
+def find_empty(bo):
+    for i in range(len(bo)):
+        for j in range(len(bo[0])):
+            if bo[i][j] == 0:
+                return (i, j)  # row, col
+
+    return None
+
+print_board(board)
+solve(board)  # this calls on the function to make it acc work
+print("_________________________")
+print ()
+print_board(board)
